@@ -5,6 +5,7 @@ const Department = require('./lib/Department');
 const Employee = require('./lib/Employee');
 const Role = require('./lib/Role')
 
+//instantiate classes
 const department = new Department;
 const employee = new Employee;
 const role = new Role;
@@ -170,14 +171,22 @@ const promptNewDepartment = async () => {
         name: 'deptName',
         message: 'What is the name of the new department?'
     })
-        .then(choice => {
+    .then(choice => {
             //console.log(choice)
-            department.addNewDepartment(choice.deptName);
+        return department.addNewDepartment(choice.deptName);
+    })
+    .then(result => {
+        if (result.affectedRows > 0) {
+            
+            return `\nNew Department Created! ID is ${result.insertId}`;
+        }
+    
+        return console.log("An error has occured");
     })
 }
 
 const listActions = () => {
-    inquirer.prompt(
+    return inquirer.prompt(
         {
             type: 'list',
             name: 'mainAction',
@@ -217,7 +226,7 @@ const listActions = () => {
                 case 4:
                     promptNewDepartment().then(result => {
                         console.log(result);
-                        listActions;
+                        listActions();
                     })
                     break;
                 case 5:
