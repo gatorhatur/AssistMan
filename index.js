@@ -184,6 +184,7 @@ const promptNewDepartment = async () => {
 }
 
 const startPrompt = () => {
+    console.log(`\n`);
     return inquirer.prompt(
         {
             type: 'list',
@@ -249,7 +250,7 @@ const startPrompt = () => {
                     startPrompt();
                     break;
             }
-            console.log(`\n`)
+            
     })
 }
 
