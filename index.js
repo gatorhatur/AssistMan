@@ -10,7 +10,7 @@ const department = new Department;
 const employee = new Employee;
 const role = new Role;
 
-//available actions
+//available actions for inquirer
 const actions = [
     {
         name: 'View all Departments',
@@ -46,7 +46,7 @@ const actions = [
     }
 ]
 
-
+//handles the UpdateEmployee flow
 const promptUpdateEmployee = async () => {
     const empChoices = await employee.getEmployeeList()
     const roleChoices = await role.getRolesList();
@@ -71,6 +71,7 @@ const promptUpdateEmployee = async () => {
         
 }
 
+//handles the New Employee flow
 const promptAddEmployee = async () => {
 
     const roleChoices = await role.getRolesList();
@@ -117,6 +118,7 @@ const promptAddEmployee = async () => {
       
 }
 
+//handles the new Role flow
 const promptNewRole = async () => {
 
     const deptChoices = await department.getDepartments();
@@ -160,6 +162,7 @@ const promptNewRole = async () => {
     })
 }
 
+//handles the new Department flow
 const promptNewDepartment = async () => {
     return inquirer.prompt({
         type: 'input',
@@ -180,7 +183,7 @@ const promptNewDepartment = async () => {
     })
 }
 
-const listActions = () => {
+const startPrompt = () => {
     return inquirer.prompt(
         {
             type: 'list',
@@ -190,6 +193,7 @@ const listActions = () => {
         }
     )
         .then(action => {
+            console.log(`\n`)
             switch (action.mainAction) {
                 case 100:
                     console.log('Exiting, see you again soon!')
@@ -197,9 +201,9 @@ const listActions = () => {
                 case 1:
                     department.viewDepartments()
                         .then(result => {
-                            console.log(`\n-----------------\nViewing All Departments`);
+                            console.log(`Viewing All Departments`);
                             console.table(result)
-                            listActions();
+                            startPrompt();
                         })
                     break;
                 case 2:
@@ -207,7 +211,7 @@ const listActions = () => {
                         .then(result => {
                             console.log('Viewing all Roles')
                             console.table(result);
-                            listActions();
+                            startPrompt();
                     })
                     break;
                 case 3:
@@ -215,42 +219,41 @@ const listActions = () => {
                         .then(result => {
                             console.log('Viewing all Employees')
                             console.table(result);
-                            listActions();
+                            startPrompt();
                     })
                     break;
                 case 4:
                     promptNewDepartment().then(result => {
                         console.log(result);
-                        listActions();
+                        startPrompt();
                     })
                     break;
                 case 5:
                     promptNewRole().then(result => {
                         console.log(result);
-                        listActions();
+                        startPrompt();
                     })
                     break;
                 case 6:
                     promptAddEmployee().then((result) => {
                         console.log(result);
-                        listActions()
+                        startPrompt()
                     })
                     break;
                 case 7:
                     promptUpdateEmployee()
-                        .then(() => listActions());
+                        .then(() => startPrompt());
                     break;
                 default:
                     console.log("This action is not valid, please try again");
-                    listActions();
+                    startPrompt();
                     break;
             }
-            //return listActions();
+            console.log(`\n`)
     })
 }
 
-listActions();
-//promptAddEmployee();
+startPrompt();
 
 
 
