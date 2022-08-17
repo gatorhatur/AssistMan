@@ -46,33 +46,28 @@ const actions = [
     }
 ]
 
+
 const promptUpdateEmployee = async () => {
-    const empData = {}
-    empData["id"] = await employee.getEmployeeList()
-        .then(result => {
-            return inquirer.prompt({
+    const empChoices = await employee.getEmployeeList()
+    const roleChoices = await role.getRolesList();
+
+    return inquirer.prompt([{
                 type: 'list',
                 name: 'employee_id',
-                choices: result,
+                choices: empChoices,
                 message: 'Select an employee to update'
-            })
-            .then(choice => choice.employee_id)           
-        })
-
-    empData["role"] = await role.getRolesList()
-        .then(result => {
-            return inquirer.prompt({
+            },
+            {
                 type: 'list',
                 name: 'role_id',
-                choices: result,
+                choices: roleChoices,
                 message: `Select the employee's new role`        
-            })
-            .then(choice => choice.role_id)
-        })
-        
-    //console.log(empData);
-    employee.updateRole(empData.id, empData.role)
-        .then(result => console.log(`\n${result.info}`));
+            }
+    ])
+    .then(choices => {
+        return employee.updateRole(choices.employee_id, choices.role_id)
+    })
+    .then(result => console.log(`\n${result.info}`));
         
 }
 
