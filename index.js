@@ -3,7 +3,7 @@ const cTable = require('console.table');
 const Department = require('./lib/Department');
 const Employee = require('./lib/Employee');
 const Role = require('./lib/Role');
-const { EventEmitter } = require('mysql2/typings/mysql/lib/Connection');
+const EventEmitter = require('events')
 
 //instantiate classes
 const department = new Department;
@@ -48,22 +48,22 @@ const actions = [
         name: 'Quit',
         value: 100
     },
-    {
-        name: new inquirer.Separator(),
-        value: 101
-    },
-    {
-        name: "Update Employee Manager",
-        value: 8
-    },
-    {
-        name: "View Employees by Manager",
-        value: 9
-    },
-    {
-        name: "View Employees by Department",
-        value: 10
-    },
+    // {
+    //     name: new inquirer.Separator(),
+    //     value: 101
+    // },
+    // {
+    //     name: "Update Employee Manager",
+    //     value: 8
+    // },
+    // {
+    //     name: "View Employees by Manager",
+    //     value: 9
+    // },
+    // {
+    //     name: "View Employees by Department",
+    //     value: 10
+    // },
     {
         name: "Delete a Employee,Role, or Department",
         value: 11
@@ -224,7 +224,66 @@ const promptBudget = async () => {
     )
         .then(choice => {
             return employee.viewBudget(choice.department_id);
+        })
+        .then(result => {
+            console.table(result);
+            return startPrompt();
     })
+}
+
+const promptDelete = async () => {
+
+    const employees = await employee.getEmployeeList();
+    const departments = await department.getDepartments();
+    const roles = await role.getRolesList();
+
+    return inquirer.prompt({
+        type: 'list',
+        message: 'What record type would you like to delete?',
+        choices: ['Employee', 'Department', 'Role'],
+        name: 'deleteChoice'
+    })
+        .then(choice => {
+            let recordList = []
+            switch (choice.deleteChoice) {
+                case 'Employee':
+                    recordList = employees;
+                    break;
+                case 'Department':
+                    recordList = departments;
+                    break;
+                case 'Role':
+                    recordList = roles;
+            }
+            
+            return inquirer.prompt({
+                type: 'list',
+                message: 'Choose a record to delete',
+                choices: recordList,
+                name: 'recordId'
+            })
+                .then(deleteChoice => {
+                    switch (choice.deleteChoice) {
+                        case 'Employee':
+                            return employee.deleteEmployee(deleteChoice.recordId);
+                        case 'Department':
+                            return department.deleteDepartment(deleteChoice.recordId);
+                        case 'Role':
+                            return role.deleteRole(deleteChoice.recordId);
+                            // recordList = await role.getRolesList();
+                    }
+            })
+        })
+        .then(result => {
+            if (result.affectedRows > 0) {
+            
+                return console.log(`Record was successfully deleted`);
+                
+            }
+        
+            return console.log("Error: Record not found");
+        })
+    .then(() => startPrompt())
 }
 
 function startPrompt() {
@@ -290,10 +349,12 @@ function startPrompt() {
                     promptUpdateEmployee()
                         .then(() => startPrompt());
                     break;
+                case 11:
+                    promptDelete();
+                    break;
                 case 12:
-                    promptBudget()
-                        .then(result => console.table(result));
-                    startPrompt();
+                    promptBudget();
+                    break;
                 default:
                     console.log("This action is not valid, please try again");
                     startPrompt();
