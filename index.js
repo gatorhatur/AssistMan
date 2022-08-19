@@ -190,6 +190,34 @@ const promptNewRole = async () => {
     })
 }
 
+const promptUpdateManager = async () => {
+    const employeeChoices = await employee.getEmployeeList();
+    const managerChoices = await employee.getEmployeeList()
+    managerChoices.push({ name: 'No Manager', value: 'NULL' });
+
+    return inquirer.prompt([
+        {
+            type: 'list',
+            message: 'Which employee would you like to upate the manager of?',
+            choices: employeeChoices,
+            name: 'employeeId'
+        },
+        {
+            type: 'list',
+            message: 'Who will be their new manager?',
+            choices: managerChoices,
+            name: 'managerId'
+        }
+    ])
+        .then(choices => {
+            return employee.updateManager(choices.employeeId, choices.managerId)
+        })
+        .then(result => {
+            console.log(`\n${result.info}`)
+            return startPrompt();
+        });
+}
+
 //handles the new Department flow
 const promptNewDepartment = async () => {
     return inquirer.prompt({
@@ -384,6 +412,9 @@ function startPrompt() {
                 case 7:
                     promptUpdateEmployee()
                         .then(() => startPrompt());
+                    break;
+                case 8:
+                    promptUpdateManager();
                     break;
                 case 9:
                     promptByManager();
