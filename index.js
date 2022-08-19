@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const ui = new inquirer.ui.BottomBar()
 const cTable = require('console.table');
 const Department = require('./lib/Department');
 const Employee = require('./lib/Employee');
@@ -183,7 +182,7 @@ const promptNewDepartment = async () => {
     })
 }
 
-const startPrompt = () => {
+function startPrompt() {
     console.log(`\n`);
     return inquirer.prompt(
         {
@@ -198,6 +197,7 @@ const startPrompt = () => {
             switch (action.mainAction) {
                 case 100:
                     console.log('Exiting, see you again soon!')
+                    process.exit();
                     break;
                 case 1:
                     department.viewDepartments()
