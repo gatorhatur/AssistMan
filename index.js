@@ -2,12 +2,17 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const Department = require('./lib/Department');
 const Employee = require('./lib/Employee');
-const Role = require('./lib/Role')
+const Role = require('./lib/Role');
+const { EventEmitter } = require('mysql2/typings/mysql/lib/Connection');
 
 //instantiate classes
 const department = new Department;
 const employee = new Employee;
 const role = new Role;
+
+const emitter = new EventEmitter
+emitter.setMaxListeners(0);
+
 
 //available actions for inquirer
 const actions = [
@@ -42,6 +47,30 @@ const actions = [
     {
         name: 'Quit',
         value: 100
+    },
+    {
+        name: new inquirer.Separator(),
+        value: 101
+    },
+    {
+        name: "Update Employee Manager",
+        value: 8
+    },
+    {
+        name: "View Employees by Manager",
+        value: 9
+    },
+    {
+        name: "View Employees by Department",
+        value: 10
+    },
+    {
+        name: "Delete a Employee,Role, or Department",
+        value: 11
+    },
+    {
+        name: "View Department Budget",
+        value: 12
     }
 ]
 
@@ -182,6 +211,22 @@ const promptNewDepartment = async () => {
     })
 }
 
+const promptBudget = async () => {
+    const deptChoices = await department.getDepartments();
+
+    return inquirer.prompt(
+        {
+            type: 'list',
+            name: 'department_id',
+            choices: deptChoices,
+            message: 'Which department would you like to see the budget for?'
+        }
+    )
+        .then(choice => {
+            return employee.viewBudget(choice.department_id);
+    })
+}
+
 function startPrompt() {
     console.log(`\n`);
     return inquirer.prompt(
@@ -245,6 +290,10 @@ function startPrompt() {
                     promptUpdateEmployee()
                         .then(() => startPrompt());
                     break;
+                case 12:
+                    promptBudget()
+                        .then(result => console.table(result));
+                    startPrompt();
                 default:
                     console.log("This action is not valid, please try again");
                     startPrompt();
