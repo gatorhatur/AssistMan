@@ -48,22 +48,22 @@ const actions = [
         name: 'Quit',
         value: 100
     },
-    // {
-    //     name: new inquirer.Separator(),
-    //     value: 101
-    // },
-    // {
-    //     name: "Update Employee Manager",
-    //     value: 8
-    // },
-    // {
-    //     name: "View Employees by Manager",
-    //     value: 9
-    // },
-    // {
-    //     name: "View Employees by Department",
-    //     value: 10
-    // },
+    {
+        name: new inquirer.Separator(),
+        value: 101
+    },
+    {
+        name: "Update Employee Manager",
+        value: 8
+    },
+    {
+        name: "View Employees by Manager",
+        value: 9
+    },
+    {
+        name: "View Employees by Department",
+        value: 10
+    },
     {
         name: "Delete a Employee,Role, or Department",
         value: 11
@@ -286,6 +286,42 @@ const promptDelete = async () => {
     .then(() => startPrompt())
 }
 
+const promptByDepartment = async () => {
+    const departmentChoices = await department.getDepartments();
+
+    return inquirer.prompt({
+        type: 'list',
+        message: 'Choose the department you want to view employees from.',
+        choices: departmentChoices,
+        name: 'department_id'
+    })
+        .then(choice => {
+            return employee.viewByDepartment(choice.department_id);
+        })
+        .then(result => {
+            console.table(result);
+            return startPrompt();
+    })
+}
+
+const promptByManager = async () => {
+    const managerChoices = await employee.getManagerList();
+
+    return inquirer.prompt({
+        type: 'list',
+        message: 'Choose the department you want to view employees from.',
+        choices: managerChoices,
+        name: 'manager_id'
+    })
+        .then(choice => {
+            return employee.viewByManager(choice.manager_id);
+        })
+        .then(result => {
+            console.table(result);
+            return startPrompt();
+    })
+}
+
 function startPrompt() {
     console.log(`\n`);
     return inquirer.prompt(
@@ -348,6 +384,12 @@ function startPrompt() {
                 case 7:
                     promptUpdateEmployee()
                         .then(() => startPrompt());
+                    break;
+                case 9:
+                    promptByManager();
+                    break;
+                case 10:
+                    promptByDepartment();
                     break;
                 case 11:
                     promptDelete();
