@@ -22,4 +22,4 @@ From the ../AssistMan directory - `node index.js`
 ## Links
 
 [View Demo]('https://drive.google.com/file/d/1qkCCPb-PY3U_r2Dn-E6eACHhhFvMDIqv/view')<br>
-[Checkout the Code]('https://github.com/gatorhatur/AssistMan')
+[Checkout the Code]('https://github.com/gatorhatur/AssistMan') 
