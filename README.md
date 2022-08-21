@@ -16,7 +16,7 @@ A simple command line application that ties into a mySQL backend. Users will be 
 - Create and seed the database (If you do not want to seed the database delete the insert commands below the comment.) - `source schmea.sql`
 - The schema file will create a service account use that will only have access to the created database.
 ### You're Ready!
-From the ../AssistMan directory - `node index.js`
+From the ../EmployMan directory - `node index.js`
 
 ## Links
 
