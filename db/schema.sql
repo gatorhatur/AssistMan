@@ -34,6 +34,7 @@ CREATE TABLE employee (
     CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) on DELETE SET NULL
 );
 
+--If you do not want to seed your database delete everything below this comment.
 INSERT INTO department (name)     
     VALUES
         ('Shipping and Handling'),
